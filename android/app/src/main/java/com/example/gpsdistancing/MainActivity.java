@@ -61,9 +61,7 @@ public class MainActivity extends FlutterActivity {
             //set Current latitude and longitude
             currentLon=loc.getLongitude();
             currentLat=loc.getLatitude();
-            display.setText("Long" + currentLon);
-
-
         }
     }
+    
 }
