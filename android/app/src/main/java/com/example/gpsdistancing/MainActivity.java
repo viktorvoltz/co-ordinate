@@ -23,18 +23,18 @@ public class MainActivity extends FlutterActivity {
     double currentLat = 0;
     double lastLon = 0;
     double lastLat = 0;
-    String distance;
+    String cordinate;
 
     @Override
     public void configureFlutterEngine(@NonNull FlutterEngine flutterEngine) {
         super.configureFlutterEngine(flutterEngine);
         new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), CHANNEL)
                 .setMethodCallHandler((call, result) -> {
-                    if (call.method.equals("getDistance")) {
-                        String distance = getDistance();
+                    if (call.method.equals("getCordinate")) {
+                        String cordinate = getCordinate();
 
-                        if (distance != "No location Found") {
-                            result.success(distance);
+                        if (cordinate != "No location Found") {
+                            result.success(cordinate);
                         } else {
                             result.error("UNAVAILABLE", "No location Found", null);
                         }
@@ -44,7 +44,7 @@ public class MainActivity extends FlutterActivity {
                 });
     }
 
-    private String getDistance(){
+    private String getCordinate(){
         LocationManager lm = (LocationManager) getSystemService(LOCATION_SERVICE);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -65,15 +65,15 @@ public class MainActivity extends FlutterActivity {
         @SuppressLint("MissingPermission") Location loc = lm.getLastKnownLocation(lm.GPS_PROVIDER);
 
         if(loc==null){
-            distance = "No location Found";
+            cordinate = "No location Found";
         }
         else{
             //set Current latitude and longitude
             currentLon=loc.getLongitude();
             currentLat=loc.getLatitude();
-            distance = "Lon: " + currentLon + "   " + "Lat: " + currentLat;
+            cordinate = "Lon: " + currentLon + "   " + "Lat: " + currentLat;
         }
-        return distance;
+        return cordinate;
     }
     
 }
