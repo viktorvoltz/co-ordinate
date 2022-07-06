@@ -11,7 +11,7 @@ class GpsDistancing extends StatefulWidget {
 class _GpsDistancingState extends State<GpsDistancing> {
 
   static const platform = MethodChannel('com.chinonso.dev/gpsdistancing');
-  String _cordinate = 'Unknown distance.';
+  String _cordinate = 'no cordinates.';
 
   Future<void> _getCordinate() async{
     String cordinate;

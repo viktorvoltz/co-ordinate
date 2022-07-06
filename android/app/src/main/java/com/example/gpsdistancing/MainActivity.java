@@ -17,7 +17,7 @@ import io.flutter.plugin.common.MethodChannel;
 
 public class MainActivity extends FlutterActivity {
 
-    private static final String CHANNEL = "con.chinonso.dev/gpsdistancing";
+    private static final String CHANNEL = "com.chinonso.dev/gpsdistancing";
 
     double currentLon = 0;
     double currentLat = 0;
