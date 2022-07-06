@@ -30,11 +30,21 @@ public class MainActivity extends FlutterActivity {
         super.configureFlutterEngine(flutterEngine);
         new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), CHANNEL)
                 .setMethodCallHandler((call, result) -> {
+                    if (call.method.equals("getDistance")) {
+                        String distance = getDistance();
 
+                        if (distance != "No location Found") {
+                            result.success(distance);
+                        } else {
+                            result.error("UNAVAILABLE", "No location Found", null);
+                        }
+                    } else {
+                        result.notImplemented();
+                    }
                 });
     }
 
-    private void getDistance(){
+    private String getDistance(){
         LocationManager lm = (LocationManager) getSystemService(LOCATION_SERVICE);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -48,10 +58,10 @@ public class MainActivity extends FlutterActivity {
                             Manifest.permission.ACCESS_FINE_LOCATION,
                             Manifest.permission.ACCESS_COARSE_LOCATION },
                     1);
-            return;
+            return "0";
         }
 
-        lm.requestLocationUpdates(lm.GPS_PROVIDER, 0, 0, Loclist);
+        //lm.requestLocationUpdates(lm.GPS_PROVIDER, 0, 0, Loclist);
         @SuppressLint("MissingPermission") Location loc = lm.getLastKnownLocation(lm.GPS_PROVIDER);
 
         if(loc==null){
@@ -61,7 +71,9 @@ public class MainActivity extends FlutterActivity {
             //set Current latitude and longitude
             currentLon=loc.getLongitude();
             currentLat=loc.getLatitude();
+            distance = "Lon: " + currentLon + "   " + "Lat: " + currentLat;
         }
+        return distance;
     }
     
 }
