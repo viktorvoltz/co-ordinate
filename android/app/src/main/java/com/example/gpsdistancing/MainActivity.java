@@ -6,6 +6,8 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.location.LocationRequest;
+import android.os.Bundle;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -33,10 +35,10 @@ public class MainActivity extends FlutterActivity {
                     if (call.method.equals("getCordinate")) {
                         String cordinate = getCordinate();
 
-                        if (cordinate != "No location Found") {
+                        if (cordinate != "last location unknown") {
                             result.success(cordinate);
                         } else {
-                            result.error("UNAVAILABLE", "No location Found", null);
+                            result.error("UNAVAILABLE", cordinate, null);
                         }
                     } else {
                         result.notImplemented();
@@ -61,19 +63,88 @@ public class MainActivity extends FlutterActivity {
             return "0";
         }
 
-        //lm.requestLocationUpdates(lm.GPS_PROVIDER, 0, 0, Loclist);
+
+        lm.requestLocationUpdates(lm.GPS_PROVIDER, 0, 0, Loclist);
         @SuppressLint("MissingPermission") Location loc = lm.getLastKnownLocation(lm.GPS_PROVIDER);
 
         if(loc==null){
-            cordinate = "No location Found";
+            cordinate = "last location unknown";
+            Log.d("LOG: ", cordinate);
         }
         else{
             //set Current latitude and longitude
             currentLon=loc.getLongitude();
             currentLat=loc.getLatitude();
             cordinate = "Lon: " + currentLon + "   " + "Lat: " + currentLat;
+            Log.d("LOG: ", cordinate);
         }
         return cordinate;
     }
-    
+
+    LocationListener Loclist = new LocationListener(){
+        @SuppressLint("MissingPermission")
+        @Override
+        public void onLocationChanged(Location location) {
+            // TODO Auto-generated method stub
+
+            //start location manager
+            LocationManager lm =(LocationManager) getSystemService(LOCATION_SERVICE);
+
+            //Get last location
+            @SuppressLint("MissingPermission") Location loc = lm.getLastKnownLocation(lm.GPS_PROVIDER);
+
+            //Request new location
+            lm.requestLocationUpdates(lm.GPS_PROVIDER, 0,0, Loclist);
+
+            //Get new location
+            Location loc2 = lm.getLastKnownLocation(lm.GPS_PROVIDER);
+
+            //get the current lat and long
+            currentLat = loc.getLatitude();
+            currentLon = loc.getLongitude();
+
+
+            Location locationA = new Location("point A");
+            locationA.setLatitude(lastLat);
+            locationA.setLongitude(lastLon);
+
+            Location locationB = new Location("point B");
+            locationB.setLatitude(currentLat);
+            locationB.setLongitude(currentLon);
+
+            double distanceMeters = locationA.distanceTo(locationB);
+
+            double distanceKm = distanceMeters / 1000f;
+
+            //display.setText(String.format("%.2f Km",distanceKm ));
+
+        }
+
+
+
+        @Override
+        public void onProviderDisabled(String provider) {
+            // TODO Auto-generated method stub
+
+        }
+
+
+
+        @Override
+        public void onProviderEnabled(String provider) {
+            // TODO Auto-generated method stub
+
+        }
+
+
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+            // TODO Auto-generated method stub
+
+
+
+        }
+
+    };
 }
