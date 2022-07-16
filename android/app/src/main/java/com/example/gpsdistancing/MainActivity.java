@@ -75,7 +75,7 @@ public class MainActivity extends FlutterActivity {
             //set Current latitude and longitude
             currentLon=loc.getLongitude();
             currentLat=loc.getLatitude();
-            cordinate = "Lon: " + currentLon + "   " + "Lat: " + currentLat;
+            cordinate = "Longitude: " + currentLon + "\n" + "Latitude: " + currentLat;
             Log.d("LOG: ", cordinate);
         }
         return cordinate;
