@@ -16,8 +16,8 @@ class _GpsDistancingState extends State<GpsDistancing> {
   Future<void> _getCordinate() async{
     String cordinate;
     try {
-      final int result = await platform.invokeMethod('getCordinate');
-      cordinate = 'Cordinates: \n $result .';
+      final String result = await platform.invokeMethod('getCordinate');
+      cordinate = 'Cordinates: \n$result .';
     } on PlatformException catch (e) {
       cordinate = "Failed to get location: '${e.message}'.";
     }
