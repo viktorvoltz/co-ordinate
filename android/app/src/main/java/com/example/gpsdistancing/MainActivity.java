@@ -103,6 +103,8 @@ public class MainActivity extends FlutterActivity {
             currentLat = loc.getLatitude();
             currentLon = loc.getLongitude();
 
+            getCordinate();
+
 
             Location locationA = new Location("point A");
             locationA.setLatitude(lastLat);
