@@ -116,8 +116,6 @@ public class MainActivity extends FlutterActivity {
 
             double distanceKm = distanceMeters / 1000f;
 
-            //display.setText(String.format("%.2f Km",distanceKm ));
-
         }
 
 
