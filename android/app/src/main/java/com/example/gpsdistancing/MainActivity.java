@@ -7,11 +7,20 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.location.LocationRequest;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
+
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResult;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
 
 import io.flutter.embedding.android.FlutterActivity;
 import io.flutter.embedding.engine.FlutterEngine;
@@ -27,12 +36,51 @@ public class MainActivity extends FlutterActivity {
     double lastLat = 0;
     String cordinate;
 
+    int
+            interval = 1000 * 60 * 1,
+            fastestInterval = 1000 * 50;
+
+    @RequiresApi(api = Build.VERSION_CODES.S)
     @Override
     public void configureFlutterEngine(@NonNull FlutterEngine flutterEngine) {
         super.configureFlutterEngine(flutterEngine);
         new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), CHANNEL)
                 .setMethodCallHandler((call, result) -> {
                     if (call.method.equals("getCordinate")) {
+
+                        try {
+                            GoogleApiClient
+                                    googleApiClient = new GoogleApiClient.Builder( this )
+                                    .addApi( LocationServices.API )
+                                    .build();
+
+                            googleApiClient.connect();
+
+                            //LocationRequest locationRequest = new LocationRequest.Builder(interval).build();
+                            com.google.android.gms.location.LocationRequest locationRequest = com.google.android.gms.location.LocationRequest.create()
+                                    .setPriority( LocationRequest.QUALITY_BALANCED_POWER_ACCURACY )
+                                    .setInterval( interval )
+                                    .setFastestInterval( fastestInterval );
+
+                            LocationSettingsRequest.Builder
+                                    locationSettingsRequestBuilder = new LocationSettingsRequest.Builder()
+                                    .addLocationRequest( locationRequest );
+
+                            locationSettingsRequestBuilder.setAlwaysShow( false );
+
+                            PendingResult<LocationSettingsResult>
+                                    locationSettingsResult = LocationServices.SettingsApi.checkLocationSettings(
+                                    googleApiClient, locationSettingsRequestBuilder.build() );
+
+                            if( locationSettingsResult.await().getStatus().getStatusCode() == LocationSettingsStatusCodes.RESOLUTION_REQUIRED) {
+                                locationSettingsResult.await().getStatus().startResolutionForResult( this, 0 );
+                            }
+
+                        } catch( Exception exception ) {
+                            // Log exception
+                            Log.d("GPS ERROR::", exception.getMessage());
+                        }
+
                         String cordinate = getCordinate();
 
                         if (cordinate != "last location unknown") {
@@ -97,7 +145,7 @@ public class MainActivity extends FlutterActivity {
             currentLat = loc.getLatitude();
             currentLon = loc.getLongitude();
 
-            getCordinate();
+            //getCordinate();
 
 
             Location locationA = new Location("point A");
