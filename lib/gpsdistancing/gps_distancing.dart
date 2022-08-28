@@ -19,7 +19,7 @@ class _GpsDistancingState extends State<GpsDistancing> {
       final String result = await platform.invokeMethod('getCordinate');
       cordinate = 'Cordinates: \n$result ';
     } on PlatformException catch (e) {
-      cordinate = "Failed to get location: '${e.message}'.";
+      cordinate = "Failed to get location \n turn on Location \n '${e.message}'.";
     }
 
     setState(() {
